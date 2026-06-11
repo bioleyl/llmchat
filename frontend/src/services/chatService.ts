@@ -1,7 +1,5 @@
 import type { ChatHistoryMessage, StreamChunk } from '../types/chat'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-
 interface StreamChatPayload {
     message: string
     history: ChatHistoryMessage[]
@@ -11,6 +9,7 @@ export async function streamChat(
     payload: StreamChatPayload,
     onDelta: (delta: string) => void
 ): Promise<string> {
+    const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
     const response = await fetch(`${API_BASE_URL}/api/chat/stream`, {
         method: 'POST',
         headers: {

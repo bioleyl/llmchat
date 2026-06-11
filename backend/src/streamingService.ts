@@ -1,6 +1,7 @@
 import { ChatHistoryMessage, ChatRequestBody } from './types.js';
 import { filterChatHistoryMessages } from './helpers.js';
 import { config } from './config.js';
+import { getChatModelInfo } from './llmProxyService.js';
 
 export async function streamChatResponse(
   req: any,
@@ -40,11 +41,13 @@ export async function streamChatResponse(
       headers.Authorization = `Bearer ${config.apiToken}`;
     }
 
-    const lmResponse = await fetch(`${config.lmStudioUrl}/v1/chat/completions`, {
+    const [modelId, url] = getChatModelInfo()[0] || [];
+
+    const lmResponse = await fetch(`${url}/v1/chat/completions`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        model: config.modelName,
+        model: modelId,
         messages,
         max_tokens: 2000,
         stream: true
