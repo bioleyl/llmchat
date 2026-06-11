@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "lib": ["ES2021"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "isolatedModules": true,
+
+    /* Linting and Type checking */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Emit options */
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

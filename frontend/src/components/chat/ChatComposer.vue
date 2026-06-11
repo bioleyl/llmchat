@@ -1,0 +1,118 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const props = defineProps<{
+    isSending: boolean
+    userTokens?: number
+    assistantTokens?: number
+    totalTokens?: number
+}>()
+
+const emit = defineEmits<{
+    (e: 'send', value: string): void
+}>()
+
+const text = ref('')
+
+function submit() {
+    const value = text.value.trim()
+    if (!value || props.isSending) {
+        return
+    }
+
+    emit('send', value)
+    text.value = ''
+}
+</script>
+
+<template>
+    <form class="composer" @submit.prevent="submit">
+        <label for="chat-input" class="sr-only">Type a message</label>
+        <textarea id="chat-input" v-model="text" class="composer-input" rows="2" :disabled="isSending"
+            placeholder="Ask anything..." @keydown.enter.exact.prevent="submit"></textarea>
+        <div class="token-counts">
+            <span v-if="userTokens !== undefined">User: {{ userTokens }} tokens</span>
+            <span v-if="assistantTokens !== undefined">Assistant: {{ assistantTokens }} tokens</span>
+            <span v-if="totalTokens !== undefined">Total: {{ totalTokens }} tokens</span>
+        </div>
+        <button class="send-btn" type="submit" :disabled="isSending || !text.trim()">
+            Send
+        </button>
+    </form>
+</template>
+
+<style scoped>
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.composer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 16px;
+    border-top: 1px solid #9ca3af;
+    background: #e5e7eb;
+}
+
+.composer-input {
+    resize: none;
+    border: 1px solid #9ca3af;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font: inherit;
+    line-height: 1.4;
+    color: #0f172a;
+    background: #f3f4f6;
+    outline: none;
+}
+
+.composer-input:focus {
+    border-color: #6b7280;
+    box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.2);
+}
+
+.send-btn {
+    min-height: 42px; /* Make the button taller */
+    align-self: flex-end; /* Align to the bottom of the grid area */
+    border: 1px solid #4b5563;
+    border-radius: 4px;
+    padding: 0 20px;
+    background: #4b5563;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.send-btn:disabled,
+.composer-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.token-counts {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 4px;
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+    .composer {
+        grid-template-columns: 1fr;
+    }
+
+    .send-btn {
+        min-height: 42px;
+    }
+}
+</style>

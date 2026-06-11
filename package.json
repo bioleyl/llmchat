@@ -1,0 +1,37 @@
+{
+  "name": "llm-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LLM Chat application monorepo with Vue frontend and Node.js backend",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:all": "concurrently \"npm run dev:frontend\" \"npm run start:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm run start",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:all": "npm run build:frontend"
+  },
+  "keywords": [
+    "chat",
+    "llm",
+    "lm-studio",
+    "monorepo",
+    "vuejs"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "concurrently": "^10.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
