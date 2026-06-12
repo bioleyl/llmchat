@@ -9,7 +9,7 @@ export async function streamChat(
     payload: StreamChatPayload,
     onDelta: (delta: string) => void
 ): Promise<string> {
-    const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
+    const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
     const response = await fetch(`${API_BASE_URL}/api/chat/stream`, {
         method: 'POST',
         headers: {
