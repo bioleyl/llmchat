@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { request } from "undici";
+import { Model } from '../types.js';
 
-const MODEL_MAP = {
+const MODEL_MAP: Record<string, string> = {
     "fast-ts": "http://localhost:8081",
     "fullstack": "http://localhost:8080",
 };
@@ -10,8 +11,8 @@ export function getChatModelInfo(): [modelId: string, url: string][] {
     return Object.entries(MODEL_MAP).filter(([id, url]) => id === "fast-ts");
 }
 
-export function getAvailableModels() {
-    return {
+export function getAvailableModels(): Promise<{ object: string; data: Model[] }> {
+    return Promise.resolve({
         object: "list",
         data: Object.keys(MODEL_MAP).map((id) => ({
             id,
@@ -19,12 +20,11 @@ export function getAvailableModels() {
             owned_by: "local-gateway",
             created: 0,
         })),
-    }
+    });
 }
 
 export async function llmProxy(req: Request, res: Response) {
     const model = req.body.model;
-    //@ts-ignore
     const target = MODEL_MAP[model];
 
     if (!target) {

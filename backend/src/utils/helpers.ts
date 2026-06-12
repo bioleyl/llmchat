@@ -1,4 +1,4 @@
-import { ChatHistoryMessage } from './types.js';
+import { ChatHistoryMessage } from '../types.js';
 
 export function isChatHistoryMessage(item: any): item is ChatHistoryMessage {
   return typeof item?.role === 'string' && 
