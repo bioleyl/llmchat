@@ -3,7 +3,7 @@ import { request } from "undici";
 import { Model } from '../types.js';
 
 const MODEL_MAP: Record<string, string> = {
-    "fast-ts": "http://localhost:8081",
+    "fast-ts": "http://192.168.1.10:8081",
     "fullstack": "http://localhost:8080",
 };
 
