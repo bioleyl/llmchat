@@ -64,9 +64,6 @@ async function fetchLMResponse(url: string, modelId: string, messages: ChatHisto
     'Content-Type': 'application/json'
   };
 
-  if (config.apiToken) {
-    headers.Authorization = `Bearer ${config.apiToken}`;
-  }
 
   const response = await fetch(`${url}/v1/chat/completions`, {
     method: 'POST',
