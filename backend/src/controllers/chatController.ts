@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { streamChatResponse } from '../services/streamingService.js';
-import { getAvailableModels } from '../services/llmProxyService.js';
+import { getAvailableModels, llmProxy } from '../services/llmProxyService.js';
 
 export const chatController = {
   async streamChat(req: Request, res: Response) {
@@ -19,6 +19,15 @@ export const chatController = {
     } catch (error) {
       console.error('Error getting models:', error);
       res.status(500).json({ error: 'Failed to fetch models' });
+    }
+  },
+
+  async proxyChat(req: Request, res: Response) {
+    try {
+      await llmProxy(req, res);
+    } catch (error) {
+      console.error('Error in proxy chat:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 };
