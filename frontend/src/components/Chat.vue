@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import ChatComposer from './chat/ChatComposer.vue'
 import ChatHeader from './chat/ChatHeader.vue'
 import MessageList from './chat/MessageList.vue'
@@ -21,6 +21,7 @@ const messages = ref<Message[]>([
 const chatHistory = ref<ChatHistoryMessage[]>([])
 const isSending = ref(false)
 const isHeaderVisibleOnMobile = ref(true)
+const chatComposerRef = ref<InstanceType<typeof ChatComposer> | null>(null)
 
 // Computed properties for token counts
 const userTokens = computed(() => {
@@ -106,6 +107,10 @@ async function handleSend(text: string) {
     appendAssistantDelta(assistantMessageId, '\n\nSorry, I could not reach the backend right now.')
   } finally {
     isSending.value = false
+    // Focus the input after processing is complete
+    nextTick(() => {
+      chatComposerRef.value?.focusInput()
+    })
   }
 }
 </script>
@@ -119,7 +124,7 @@ async function handleSend(text: string) {
       <MessageList :messages="messages" :isSending="isSending" :hasFloatingHeaderOnMobile="true"
         @scroll-direction="handleMessageListScrollDirection" />
 
-      <ChatComposer :isSending="isSending" :userTokens="userTokens" :assistantTokens="assistantTokens" :totalTokens="totalTokens" @send="handleSend" />
+      <ChatComposer ref="chatComposerRef" :isSending="isSending" :userTokens="userTokens" :assistantTokens="assistantTokens" :totalTokens="totalTokens" @send="handleSend" />
     </article>
   </section>
 </template>

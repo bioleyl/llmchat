@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps<{
     isSending: boolean
@@ -13,6 +13,7 @@ const emit = defineEmits<{
 }>()
 
 const text = ref('')
+const inputRef = ref<HTMLTextAreaElement | null>(null)
 
 function submit() {
     const value = text.value.trim()
@@ -20,15 +21,32 @@ function submit() {
         return
     }
 
+    // Emit send event
     emit('send', value)
     text.value = ''
 }
+
+// Focus input on component mount
+onMounted(() => {
+    if (inputRef.value) {
+        inputRef.value.focus()
+    }
+})
+
+// Expose a method to focus the input
+defineExpose({
+    focusInput() {
+        if (inputRef.value) {
+            inputRef.value.focus()
+        }
+    }
+})
 </script>
 
 <template>
     <form class="composer" @submit.prevent="submit">
         <label for="chat-input" class="sr-only">Type a message</label>
-        <textarea id="chat-input" v-model="text" class="composer-input" rows="2" :disabled="isSending"
+        <textarea id="chat-input" ref="inputRef" v-model="text" class="composer-input" rows="2" :disabled="isSending"
             placeholder="Ask anything..." @keydown.enter.exact.prevent="submit"></textarea>
         <div class="token-counts">
             <span v-if="userTokens !== undefined">User: {{ userTokens }} tokens</span>
