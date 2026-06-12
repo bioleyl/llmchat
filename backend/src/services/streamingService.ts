@@ -1,17 +1,12 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { ChatHistoryMessage, ChatRequestBody } from '../types.js';
 import { filterChatHistoryMessages } from '../utils/helpers.js';
 import { getChatModelInfo } from './llmProxyService.js';
 import { config } from '../config.js';
 
-// Define a type for the response with body property
-interface StreamingResponse extends Response {
-  body?: any;
-}
-
 export async function streamChatResponse(
-  req: Request,
-  res: Response,
+  req: ExpressRequest,
+  res: ExpressResponse,
   requestBody: ChatRequestBody
 ): Promise<void> {
   const { message, history } = requestBody;
@@ -45,7 +40,7 @@ export async function streamChatResponse(
   }
 }
 
-function setupResponseHeaders(res: Response): void {
+function setupResponseHeaders(res: ExpressResponse): void {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -55,9 +50,9 @@ function setupResponseHeaders(res: Response): void {
 
 function prepareMessages(message: string, history?: ChatHistoryMessage[]): ChatHistoryMessage[] {
   return [
-    { 
-      role: 'system', 
-      content: 'You are a helpful assistant specializes in code and your name is Marvin. When the language is not specified, you work in typescript.' 
+    {
+      role: 'system',
+      content: 'You are a helpful assistant specializes in code and your name is Marvin. When the language is not specified, you work in typescript.'
     },
     ...filterChatHistoryMessages(history || []),
     { role: 'user', content: message }
@@ -96,7 +91,7 @@ async function fetchLMResponse(url: string, modelId: string, messages: ChatHisto
   return response;
 }
 
-async function handleLMResponse(req: Request, res: Response, lmResponse: Response): Promise<void> {
+async function handleLMResponse(req: ExpressRequest, res: ExpressResponse, lmResponse: Response): Promise<void> {
   const reader = (lmResponse as any).body!.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
@@ -154,7 +149,7 @@ async function handleLMResponse(req: Request, res: Response, lmResponse: Respons
   }
 }
 
-function handleClientError(res: Response, message: string): void {
+function handleClientError(res: ExpressResponse, message: string): void {
   res.status(400);
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -163,7 +158,7 @@ function handleClientError(res: Response, message: string): void {
   res.end();
 }
 
-function handleServerError(res: Response, error: unknown): void {
+function handleServerError(res: ExpressResponse, error: unknown): void {
   const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
   res.write(`event: error\ndata: ${JSON.stringify({ error: errorMessage })}\n\n`);
   res.end();
